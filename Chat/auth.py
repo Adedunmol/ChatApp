@@ -66,7 +66,7 @@ def save_image(img):
     return picture_fn
 
 
-@auth.route('/account')
+@auth.route('/account', methods=['GET', 'POST'])
 def account():
     form = UpdateAccountForm()
     if form.validate_on_submit():
@@ -78,4 +78,5 @@ def account():
         db.session.commit()
     form.email.data = current_user.email
     form.username.data = current_user.username
-    return render_template('account.html', form=form)
+    image = url_for('static', filename='image/' + current_user.profile_picture)
+    return render_template('account.html', form=form, image=image)
