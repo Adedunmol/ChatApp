@@ -3,6 +3,9 @@ from .forms import RegistrationForm, LoginForm, UpdateAccountForm
 from . import bcrypt, db
 from .models import User
 from flask_login import login_user, logout_user, login_required, current_user
+from PIL import Image
+from secrets import token_hex
+import os
 
 auth = Blueprint('auth', __name__)
 
@@ -49,7 +52,30 @@ def logout():
     return redirect(url_for('views.home'))
 
 
+def save_image(img):
+    picture_name = token_hex(16)
+    _, picture_ext = os.path.splitext(img.filename)
+    picture_fn = picture_name + picture_ext
+    picture_path = os.path.join(auth.root_path, 'static/', picture_fn)
+
+    size = (150, 150)
+    i = Image.open(img)
+    i.thumbnail(size)
+    i.save(picture_path)
+
+    return picture_fn
+
+
 @auth.route('/account')
 def account():
     form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.image.data:
+            picture_name = save_image(form.image.data)
+            current_user.profile_picture = picture_name
+        current_user.email = form.email.data
+        current_user.username = form.username.data
+        db.session.commit()
+    form.email.data = current_user.email
+    form.username.data = current_user.username
     return render_template('account.html', form=form)
