@@ -1,0 +1,33 @@
+{% from 'form_helper.html' import displayField %}
+
+{% extends 'base.html' %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="" class="row g-3">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Log in</legend>
+                {{ displayField(form.email) }}
+                <br/>
+               {{ displayField(form.password) }}
+                <br/>
+                <div class="form-check">
+                {{ form.remember(class='form-check-input')}}
+                {{ form.remember.label(class='form-check-label')}}
+                </div>
+                <br/>
+            </fieldset>
+            <br/>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+            <br/>
+        </form>
+        <br/>
+    </div>
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            Don't An Account? <a class="ml-2" href="{{ url_for('auth.register') }}">Sign In</a>
+        </small>
+    </div>
+{% endblock %}
