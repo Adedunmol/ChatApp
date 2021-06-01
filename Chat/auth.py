@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm, UpdateAccountForm
 from . import bcrypt, db
 from .models import User
 from flask_login import login_user, logout_user, login_required, current_user
@@ -47,3 +47,9 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('views.home'))
+
+
+@auth.route('/account')
+def account():
+    form = UpdateAccountForm()
+    return render_template('account.html', form=form)
