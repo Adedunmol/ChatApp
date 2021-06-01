@@ -14,6 +14,17 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(), nullable=False, unique=True)
     password = db.Column(db.String(), nullable=False)
     profile_picture = db.Column(db.String())
+    posts = db.relationship('Post', backref='author', lazy=True)
 
     def __repr__(self):
         return f'<id:{self.id}, username:{self.username}, email:{self.email}>'
+
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    caption = db.Column(db.String(), nullable=False)
+    picture = db.Column(db.String(), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<id:{self.id}, username:{self.caption}, email:{self.picture}, post_owner: {self.user_id}>'

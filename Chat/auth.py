@@ -1,8 +1,8 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from .forms import RegistrationForm, LoginForm
 from . import bcrypt, db
 from .models import User
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 
 auth = Blueprint('auth', __name__)
 
@@ -19,7 +19,7 @@ def register():
             user = User(username=username, email=email, password=hashed_pw)
             db.session.add(user)
             db.session.commit()
-
+            flash('Your account has been created', category='success')
             return redirect(url_for('auth.login'))
         except:
             db.session.rollback()
@@ -34,8 +34,12 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user,)
-            return redirect(url_for('views.home'))
+            flash('You are now logged in', category='success')
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('views.home'))
+        else:
+            flash('The details you entered are not correct', category='danger')
     return render_template('Login.html', form=form)
 
 
