@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
-from .forms import RegistrationForm, LoginForm, UpdateAccountForm
+from .forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 from . import bcrypt, db
-from .models import User
+from .models import User, Post
 from flask_login import login_user, logout_user, login_required, current_user
 from PIL import Image
 from secrets import token_hex
@@ -53,10 +53,10 @@ def logout():
 
 
 def save_image(img):
-    picture_name = token_hex(16)
+    picture_name = token_hex(8)
     _, picture_ext = os.path.splitext(img.filename)
     picture_fn = picture_name + picture_ext
-    picture_path = os.path.join(auth.root_path, 'static/', picture_fn)
+    picture_path = os.path.join(auth.root_path, 'static/image', picture_fn)
 
     size = (150, 150)
     i = Image.open(img)
@@ -80,3 +80,22 @@ def account():
     form.username.data = current_user.username
     image = url_for('static', filename='image/' + current_user.profile_picture)
     return render_template('account.html', form=form, image=image)
+
+
+@auth.route('/post', methods=['GET', 'POST'])
+def post():
+    form = PostForm()
+    if form.validate_on_submit():
+        picture_name = save_image(form.image.data)
+        caption = form.caption.data
+        try:
+            posts = Post(caption=caption, picture=picture_name, author=current_user)
+            db.session.add(posts)
+            db.session.commit()
+            flash('Your post has been posted.', category='success')
+            return redirect(url_for('views.home'))
+        except:
+            db.session.rollback()
+        finally:
+            db.session.close()
+    return render_template('new_post.html', form=form)
