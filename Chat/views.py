@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template
+from .models import Post
+from . import db
 
 
 views = Blueprint('views', __name__)
@@ -6,7 +8,8 @@ views = Blueprint('views', __name__)
 
 @views.route('/')
 def home():
-    return render_template('post.html')
+    posts = Post.query.all()
+    return render_template('home.html', posts=posts)
 
 
 @views.route('/about')
