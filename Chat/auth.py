@@ -67,6 +67,7 @@ def save_image(img):
 
 
 @auth.route('/account', methods=['GET', 'POST'])
+@login_required
 def account():
     form = UpdateAccountForm()
     if form.validate_on_submit():

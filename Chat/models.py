@@ -29,4 +29,4 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
-        return f'<username:{self.caption}, email:{self.picture}, post_owner: {self.user_id}>'
+        return f'<caption:{self.caption}, picture:{self.picture}, post_owner: {self.user_id}>'
