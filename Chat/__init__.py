@@ -18,7 +18,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:dunmola@localhost:5432/chat'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS '] = False
 
-    from .models import User
+    from .models import User, Post
 
     from .auth import auth
     from .views import views

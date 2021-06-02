@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template
-from .models import Post
+from .models import Post, User
 from . import db
 
 
@@ -8,8 +8,11 @@ views = Blueprint('views', __name__)
 
 @views.route('/')
 def home():
-    posts = Post.query.all()
-    return render_template('home.html', posts=posts)
+    post = Post.query.all()
+    users = User.query.all()
+    print(post)
+    print(users)
+    return render_template('home.html', posts=post)
 
 
 @views.route('/about')

@@ -1,4 +1,4 @@
-from Chat import db
+from . import db
 from . import login_manager
 from flask_login import UserMixin
 from datetime import datetime
@@ -18,7 +18,7 @@ class User(UserMixin, db.Model):
     posts = db.relationship('Post', backref='author', lazy=True)
 
     def __repr__(self):
-        return f'<id:{self.id}, username:{self.username}, email:{self.email}>'
+        return f'<id:{self.id}, username:{self.username}, email:{self.email}, profile_picture: {self.profile_picture}>'
 
 
 class Post(db.Model):
@@ -29,4 +29,4 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
-        return f'<id:{self.id}, username:{self.caption}, email:{self.picture}, post_owner: {self.user_id}>'
+        return f'<username:{self.caption}, email:{self.picture}, post_owner: {self.user_id}>'

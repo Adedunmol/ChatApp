@@ -83,14 +83,15 @@ def account():
 
 
 @auth.route('/post', methods=['GET', 'POST'])
+@login_required
 def post():
     form = PostForm()
     if form.validate_on_submit():
         picture_name = save_image(form.image.data)
         caption = form.caption.data
         try:
-            posts = Post(caption=caption, picture=picture_name, author=current_user)
-            db.session.add(posts)
+            post = Post(caption=caption, picture=picture_name, author=current_user)
+            db.session.add(post)
             db.session.commit()
             flash('Your post has been posted.', category='success')
             return redirect(url_for('views.home'))
