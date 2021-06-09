@@ -1,25 +1,46 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from .forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
-from . import bcrypt, db
+from . import bcrypt, db, socketio
 from .models import User, Post
 from flask_login import login_user, logout_user, login_required, current_user
 from PIL import Image
 from secrets import token_hex
 import os
+from flask_socketio import send
+from time import localtime, strftime
 
 auth = Blueprint('auth', __name__)
+
+
+def save_image(img):
+    picture_name = token_hex(8)
+    _, picture_ext = os.path.splitext(img.filename)
+    picture_fn = picture_name + '.jpg'
+    picture_path = os.path.join(auth.root_path, 'static/image', picture_fn)
+
+    size = (125, 125)
+    i = Image.open(img)
+    i.thumbnail(size)
+    jpg_img = i.convert('RGB')
+    jpg_img.save(picture_path, quality=95)
+
+    return picture_fn
 
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
+        if form.image.data:
+            picture_name = save_image(form.image.data)
+        else:
+            flash('Please upload a picture', category='danger')
         username = form.username.data
         email = form.email.data
         password = form.password.data
         hashed_pw = bcrypt.generate_password_hash(password, 14).decode('utf-8')
         try:
-            user = User(username=username, email=email, password=hashed_pw)
+            user = User(username=username, email=email, password=hashed_pw, profile_picture=picture_name)
             db.session.add(user)
             db.session.commit()
             flash('Your account has been created', category='success')
@@ -52,20 +73,6 @@ def logout():
     return redirect(url_for('views.home'))
 
 
-def save_image(img):
-    picture_name = token_hex(8)
-    _, picture_ext = os.path.splitext(img.filename)
-    picture_fn = picture_name + picture_ext
-    picture_path = os.path.join(auth.root_path, 'static/image', picture_fn)
-
-    size = (150, 150)
-    i = Image.open(img)
-    i.thumbnail(size)
-    i.save(picture_path)
-
-    return picture_fn
-
-
 @auth.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
@@ -83,7 +90,7 @@ def account():
     return render_template('account.html', form=form, image=image)
 
 
-@auth.route('/post', methods=['GET', 'POST'])
+@auth.route('/new-post', methods=['GET', 'POST'])
 @login_required
 def post():
     form = PostForm()
@@ -101,3 +108,20 @@ def post():
         finally:
             db.session.close()
     return render_template('new_post.html', form=form)
+
+
+@auth.route('/users/<int:user_id>')
+def users(user_id):
+    return 'hello'
+
+
+@auth.route('/chat', methods=['GET', 'POST'])
+def chat():
+    return render_template('chat.html', username=current_user.username)
+
+
+@socketio.on('message')
+def message(data):
+
+    print(f'\n\n{data}\n\n')
+    send({'msg': data['msg'], 'username': data['username'], 'time_stamp': strftime('%b-%d %I:%M%p', localtime())})

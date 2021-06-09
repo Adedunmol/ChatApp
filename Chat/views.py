@@ -10,8 +10,6 @@ views = Blueprint('views', __name__)
 def home():
     post = Post.query.all()
     users = User.query.all()
-    print(post)
-    print(users)
     return render_template('home.html', posts=post)
 
 

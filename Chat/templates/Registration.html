@@ -3,7 +3,7 @@
 
 {% block content %}
     <div class="content-section">
-        <form method="POST" action="" class="row g-3">
+        <form method="POST" action="" class="row g-3" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Join Today</legend>
@@ -14,6 +14,20 @@
                {{ displayField(form.password) }}
                 <br/>
                 {{ displayField(form.confirm_password) }}
+                <br/>
+                <div class="form-group">
+                    {{ form.image.label() }}
+                    {% if form.image.errors %}
+                        {{ form.image(class="form-control-file") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.image.errors %}
+                              <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.image(class="form-control-file") }}
+                    {% endif %}
+                </div>
             </fieldset>
             <br/>
             <div class="form-group">

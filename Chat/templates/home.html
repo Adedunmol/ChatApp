@@ -1,23 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    {% for post in posts %}
     <div class="container posts-content">
         <div class="row">
             <div class="col-lg-6">
                 <div class="card mb-4">
                   <div class="card-body">
-                    <div class="media mb-3">
-                      <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="d-block ui-w-40 rounded-circle" alt="">
-                      <div class="media-body ml-3">
-                        Kenneth Frazier
-                        <div class="text-muted small">Yesterday</div>
-                      </div>
+                    <div class="media mb-3 card-header">
+                      <img style="border-radius: 100%; height: 50px; width: 50px; box-sizing: border-box; overflow: hidden;" src="{{ url_for('static', filename='image/' + post.author.profile_picture) }}" alt="Avatar">
+                        <span class="media-body ml-3">
+                            <a href="{{ url_for('auth.users', user_id=post.author.id) }}">{{ post.author.username }}</a>
+                        </span>
                     </div>
 
                     <p>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus finibus commodo bibendum. Vivamus laoreet blandit odio, vel finibus quam dictum ut.
+                      {{ post.caption }}
                     </p>
-                    <a href="javascript:void(0)" class="ui-rect ui-bg-cover" style="background-image: url('https://bootdey.com/img/Content/avatar/avatar3.png');"></a>
+                    <a href="javascript:void(0)" class="ui-rect ui-bg-cover"  style="background-image: url({{url_for('static', filename='image/' + post.picture )}});"></a>
                   </div>
                   <div class="card-footer">
                     <a href="javascript:void(0)" class="d-inline-block text-muted">
@@ -29,9 +29,11 @@
                     <a href="javascript:void(0)" class="d-inline-block text-muted ml-3">
                       <small class="align-middle">Repost</small>
                     </a>
+                      <div class="text-muted small">{{ post.date_posted.strftime('%Y-%m-%d') }}</div>
                   </div>
                 </div>
             </div>
         </div>
     </div>
+    {% endfor %}
 {% endblock %}

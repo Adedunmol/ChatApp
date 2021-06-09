@@ -8,6 +8,7 @@ from flask_wtf.file import FileAllowed
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=3)])
     email = StringField('Email', validators=[DataRequired(), validators.email()])
+    image = FileField('Image', validators=[FileAllowed(['jpg', 'png'], 'Image only!')])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=5, max=20)])
     confirm_password = PasswordField('Confirm_password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')

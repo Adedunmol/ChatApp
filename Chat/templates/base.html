@@ -25,13 +25,19 @@
           <a class="nav-link active" aria-current="page" href="{{ url_for('views.home')}}">Home</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{{ url_for('auth.post')}}">Upload</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{{ url_for('auth.account')}}">Account</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="{{ url_for('views.about')}}">About</a>
         </li>
       </ul>
     </div>
     <li class="nav-item" style="list-style: none;">
         <button class='btn pull-right'>
-            <a class="navbar-brand" href="{{ url_for('views.home')}}"><img src="{{ url_for('static', filename='image/dm3.png')}}" alt="Logo" style="width:50px;"></a>
+            <a class="navbar-brand" href="{{ url_for('auth.chat')}}"><img src="{{ url_for('static', filename='image/dm3.png')}}" alt="Logo" style="width:50px;"></a>
         </button>
     </li>
   </div>
